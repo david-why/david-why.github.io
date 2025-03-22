@@ -15,7 +15,7 @@ url: "https://davidwhy.me" # the base hostname & protocol for your site, e.g. ht
 
 # Build settings
 theme: minimal-mistakes-jekyll
-minimal_mistakes_skin: dark
+# minimal_mistakes_skin: dark
 plugins:
   - jekyll-feed
   - jekyll-archives
