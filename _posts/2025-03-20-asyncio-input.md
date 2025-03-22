@@ -281,7 +281,7 @@ async def ainput(prompt: str):
     reader = asyncio.StreamReader()
     protocol = asyncio.StreamReaderProtocol(reader)
     await loop.connect_read_pipe(lambda: protocol, sys.stdin)
-    fut: asyncio.Future[bytes | None] = asyncio.Future()
+    fut: asyncio.Future[bytes | None] = loop.create_future()
     read_task = asyncio.create_task(_readline_task(reader, fut))
     try:
         line = await fut
@@ -306,3 +306,7 @@ async def main():
 
 asyncio.run(main())
 ```
+
+## Edits
+
+- 2025-03-22: Use `loop.create_future()` instead of `asyncio.Future`.
