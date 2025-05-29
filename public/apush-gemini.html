@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>U.S. Westward Expansion: Motivations Explored</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Visualization & Content Choices:
+        - Section: Overview - Goal: Orient user, define terms. Presentation: Text blocks, expandable definitions. Interaction: Click to expand. Justification: Clarity for foundational concepts. Library: Vanilla JS.
+        - Section: Economic Drivers - Goal: Detail economic motives. Presentation: Categorized text (Land, Resources, Markets) with Unicode icons. Interaction: Expandable sections. Visualization: Bar chart for 'Railroad Land Grants' (174M acres). Justification: Organizes diverse economic factors, quantifies a key governmental economic action. Library: Chart.js, Vanilla JS.
+        - Section: Ideological Forces - Goal: Explain ideologies. Presentation: Categorized text (Tenets, Justifications, Proponents). Interaction: Expandable sections. Justification: Clearly presents abstract concepts. Library: Vanilla JS.
+        - Section: The Interplay (Case Studies) - Goal: Demonstrate synergy. Presentation: Interactive event cards (based on report's Table 1). Interaction: Click card to show detailed modal/inline expansion. Justification: Connects abstract motivations to concrete historical events effectively. Library: Vanilla JS.
+        - Section: Consequences - Goal: Show impacts. Presentation: Categorized text (Native Americans, Environment, etc.). Visualization: Bar chart for 'Indigenous Land Transferred' (500M acres). Justification: Highlights significant outcomes, quantifies a major impact. Library: Chart.js, Vanilla JS.
+        - Section: Historiography - Goal: Show changing interpretations. Presentation: Text summaries per school. Interaction: Tabs/Accordion. Justification: Compares historical viewpoints clearly. Library: Vanilla JS.
+        CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. All visuals are Chart.js (Canvas) or HTML/CSS/Unicode.
+    -->
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .active-nav-link { background-color: #f59e0b; color: white !important; }
+        .nav-link { transition: background-color 0.3s ease, color 0.3s ease; }
+        .content-section { animation: fadeIn 0.5s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .chart-container { position: relative; width: 100%; max-width: 500px; margin-left: auto; margin-right: auto; height: 300px; max-height: 350px; }
+        @media (min-width: 768px) { .chart-container { height: 350px; max-height: 400px;} }
+        .accordion-toggle {
+            background-color: #f0f9ff; /* light blue-gray */
+            color: #0f766e; /* darker teal */
+            cursor: pointer;
+            padding: 1rem;
+            width: 100%;
+            border: none;
+            text-align: left;
+            outline: none;
+            font-size: 1.125rem;
+            transition: background-color 0.3s ease;
+            border-radius: 0.375rem;
+            margin-bottom: 0.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .accordion-toggle:hover {
+            background-color: #e0f2fe; /* slightly darker blue-gray */
+        }
+        .accordion-content {
+            padding: 0 1rem 1rem 1rem;
+            background-color: white;
+            border-left: 1px solid #99f6e4; /* light teal */
+            border-right: 1px solid #99f6e4;
+            border-bottom: 1px solid #99f6e4;
+            border-radius: 0 0 0.375rem 0.375rem;
+            overflow: hidden;
+        }
+        .event-card {
+            background-color: white;
+            border: 1px solid #fed7aa; /* light amber */
+            border-radius: 0.5rem;
+            padding: 1rem;
+            transition: box-shadow 0.3s ease;
+        }
+        .event-card:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .event-card h3 {
+            color: #c2410c; /* darker amber/orange */
+        }
+    </style>
+</head>
+<body class="bg-orange-50 text-slate-800 antialiased">
+
+    <header class="bg-white shadow-md sticky top-0 z-50">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <nav class="flex flex-col sm:flex-row items-center justify-between py-3">
+                <h1 class="text-xl sm:text-2xl font-bold text-teal-700 mb-2 sm:mb-0">Westward Expansion: An Interactive Exploration</h1>
+                <ul class="flex flex-wrap justify-center sm:justify-end space-x-2 sm:space-x-3">
+                    <li><a href="#overview" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-slate-700 hover:bg-orange-100">📜 Overview</a></li>
+                    <li><a href="#economic-drivers" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-slate-700 hover:bg-orange-100">💰 Economic Drivers</a></li>
+                    <li><a href="#ideological-forces" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-slate-700 hover:bg-orange-100">✨ Ideological Forces</a></li>
+                    <li><a href="#interplay" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-slate-700 hover:bg-orange-100">🤝 The Interplay</a></li>
+                    <li><a href="#consequences" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-slate-700 hover:bg-orange-100">🌍 Consequences</a></li>
+                    <li><a href="#historiography" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-slate-700 hover:bg-orange-100">📖 Perspectives</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        
+        <section id="overview" class="content-section space-y-6">
+            <h2 class="text-3xl font-bold text-teal-700 border-b-2 border-amber-500 pb-2">📜 Unpacking the Drive West</h2>
+            <p class="text-lg leading-relaxed">The 19th-century westward expansion of the United States was a period of profound territorial growth and transformation. This era was fueled by a complex interplay of tangible economic ambitions and powerful ideological beliefs, most notably "Manifest Destiny." This interactive guide explores these dual motivations, examining how economic pursuits and ideological frameworks combined to shape the nation's continental ambitions and its lasting legacy.</p>
+            
+            <div class="bg-white p-6 rounded-lg shadow-lg">
+                <h3 class="text-2xl font-semibold text-teal-600 mb-3">Core Argument</h3>
+                <p class="mb-4">United States’ westward expansion in the 19th century was propelled by a dynamic interplay between economic ambitions and ideological constructs. While economic drivers furnished the practical goals and promised immediate benefits, ideological frameworks supplied the moral, political, and popular justifications, creating a powerful synergy.</p>
+                
+                <div class="space-y-4">
+                    <div>
+                        <button class="accordion-toggle">
+                            <span>Defining Economic Interests</span>
+                            <span class="accordion-icon text-amber-600 text-xl">▼</span>
+                        </button>
+                        <div class="accordion-content hidden prose max-w-none">
+                            <p>Motivations driven by financial gain and resource acquisition. In the 19th century, this included the desire for agricultural land, valuable minerals (gold, silver, timber), new markets, raw materials, and strategic trade routes to enhance national and individual wealth.</p>
+                        </div>
+                    </div>
+                    <div>
+                        <button class="accordion-toggle">
+                            <span>Understanding Manifest Destiny</span>
+                            <span class="accordion-icon text-amber-600 text-xl">▼</span>
+                        </button>
+                        <div class="accordion-content hidden prose max-w-none">
+                            <p>A 19th-century doctrine asserting that U.S. expansion across North America was justified, divinely ordained, and inevitable. It involved belief in American exceptionalism, the superiority of American institutions, and a duty to "civilize" or "regenerate" the continent.</p>
+                        </div>
+                    </div>
+                     <div>
+                        <button class="accordion-toggle">
+                            <span>The Idea of American Exceptionalism</span>
+                            <span class="accordion-icon text-amber-600 text-xl">▼</span>
+                        </button>
+                        <div class="accordion-content hidden prose max-w-none">
+                            <p>The belief that the United States holds a unique and special place among nations due to its distinct origins, democratic ideals, and perceived moral superiority. This fueled the idea that the U.S. had a right and responsibility to expand its governance and values.</p>
+                        </div>
+                    </div>
+                    <div>
+                        <button class="accordion-toggle">
+                            <span>The Entanglement of Motivations</span>
+                            <span class="accordion-icon text-amber-600 text-xl">▼</span>
+                        </button>
+                        <div class="accordion-content hidden prose max-w-none">
+                            <p>Economic interests and ideology were often experienced as a unified impulse. Nineteenth-century Americans frequently did not separate a divinely appointed mission from the material prosperity it was expected to yield. Ideology provided a framework where economic pursuits were justified and seen as part of a larger, uniquely American destiny.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="economic-drivers" class="content-section hidden space-y-6">
+            <h2 class="text-3xl font-bold text-teal-700 border-b-2 border-amber-500 pb-2">💰 The Driving Force of Economic Interests</h2>
+            <p class="text-lg leading-relaxed">The vast economic potential of the American West significantly fueled the westward drive. These interests ranged from acquiring land for farming and speculation to exploiting rich natural resources and developing new markets and trade routes, often facilitated by government policies.</p>
+
+            <div>
+                <button class="accordion-toggle">
+                    <span>🌾 The Lure of Land: Agriculture, Settlement, and Speculation</span>
+                    <span class="accordion-icon text-amber-600 text-xl">▼</span>
+                </button>
+                <div class="accordion-content hidden prose max-w-none space-y-3">
+                    <p>Vast tracts of land promised economic independence through farming (e.g., cotton in Texas, wheat in the Willamette Valley). Land speculation was also rampant, with expectations of rapid value appreciation. Federal policies like the <strong>Indian Removal Act (1830)</strong> and the <strong>Homestead Act (1862)</strong> opened millions of acres for settlement and agriculture.</p>
+                </div>
+            </div>
+            <div>
+                <button class="accordion-toggle">
+                    <span>💎 Exploitation of Natural Resources</span>
+                    <span class="accordion-icon text-amber-600 text-xl">▼</span>
+                </button>
+                <div class="accordion-content hidden prose max-w-none space-y-3">
+                    <p>The West was rich in resources. The <strong>California Gold Rush (1849)</strong> drew hundreds of thousands and boosted the national economy. Discoveries of silver (Nevada's Comstock Lode), copper, and coal also fueled migration. Vast timber reserves were crucial for industrial expansion. The early fur trade pioneered western trails and commerce.</p>
+                </div>
+            </div>
+            <div>
+                <button class="accordion-toggle">
+                    <span>🛤️ Development of New Markets and Trade Routes</span>
+                    <span class="accordion-icon text-amber-600 text-xl">▼</span>
+                </button>
+                <div class="accordion-content hidden prose max-w-none space-y-3">
+                    <p>Expansion aimed to connect eastern manufacturing with western agriculture and resources. Pacific territories opened trade with Asia (e.g., China trade). Overland trails (Oregon, Santa Fe) facilitated early commerce. The <strong>transcontinental railroad</strong>, spurred by the Pacific Railway Act (1862), revolutionized transport and integrated national markets. Railroads received substantial land grants.</p>
+                    <div class="chart-container my-4">
+                        <canvas id="railroadLandChart"></canvas>
+                    </div>
+                     <p class="text-sm text-center text-slate-600">Between 1850 and 1871, railroads received approximately 174 million acres of public land.</p>
+                </div>
+            </div>
+             <div>
+                <button class="accordion-toggle">
+                    <span>📈 Evolution and Government Role</span>
+                    <span class="accordion-icon text-amber-600 text-xl">▼</span>
+                </button>
+                <div class="accordion-content hidden prose max-w-none space-y-3">
+                    <p>Economic motives evolved from localized resource extraction (fur, river access) to national-scale industrial capitalism post-Civil War, fueled by resources like timber and coal, and vast railroad networks. The federal government actively shaped this, granting resources to corporations (Pacific Railway Act) and dismantling Native economies to establish a U.S.-centric economic order, favoring larger, capitalized operations.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="ideological-forces" class="content-section hidden space-y-6">
+            <h2 class="text-3xl font-bold text-teal-700 border-b-2 border-amber-500 pb-2">✨ The Power of Ideology: Manifest Destiny</h2>
+            <p class="text-lg leading-relaxed">Beyond material gains, a potent set of beliefs, primarily "Manifest Destiny" and "American Exceptionalism," provided a moral and intellectual framework that justified and encouraged territorial expansion, often casting it as a divine mission.</p>
+            
+            <div>
+                <button class="accordion-toggle">
+                    <span>📜 Core Tenets of Manifest Destiny</span>
+                    <span class="accordion-icon text-amber-600 text-xl">▼</span>
+                </button>
+                <div class="accordion-content hidden prose max-w-none space-y-3">
+                    <p><strong>Divine Ordination:</strong> Belief that God destined the U.S. to control North America (John O'Sullivan: "the continent which Providence has given us").</p>
+                    <p><strong>Spreading American Virtues:</strong> Mission to extend democracy, liberty, and self-government.</p>
+                    <p><strong>American Exceptionalism:</strong> Conviction of U.S. uniqueness and superiority, implying a right and duty to expand (evolving from Winthrop's "city upon a hill").</p>
+                    <p><strong>Inevitability:</strong> Expansion viewed as an unstoppable historical process.</p>
+                </div>
+            </div>
+            <div>
+                <button class="accordion-toggle">
+                    <span>🎭 Racial and Cultural Justifications</span>
+                    <span class="accordion-icon text-amber-600 text-xl">▼</span>
+                </button>
+                <div class="accordion-content hidden prose max-w-none space-y-3">
+                    <p>Belief in <strong>Anglo-Saxon superiority</strong> justified displacement. A <strong>"civilizing mission"</strong> aimed to uplift "savage" peoples (Native Americans, Mexicans). If resisted, displacement was rationalized as progress. Native Americans were seen as not using land to its "full potential" (Jefferson, Jackson). The idea of <strong>regenerating the land</strong> cast American settlement as improvement.</p>
+                </div>
+            </div>
+             <div>
+                <button class="accordion-toggle">
+                    <span>🗣️ Key Proponents and Expressions</span>
+                    <span class="accordion-icon text-amber-600 text-xl">▼</span>
+                </button>
+                <div class="accordion-content hidden prose max-w-none space-y-3">
+                    <p><strong>John O'Sullivan:</strong> Coined "Manifest Destiny" in 1845, popularizing it.</p>
+                    <p><strong>Political Leaders:</strong> Thomas Jefferson ("empire of liberty"), Andrew Jackson (Indian Removal), James K. Polk (annexation of Texas, Mexican-American War, Oregon).</p>
+                    <p><strong>Popular Culture:</strong> Art like John Gast's "American Progress" (1872), depicting Columbia leading "civilization" westward, displacing Native Americans and wilderness. Literature celebrated pioneer triumphs.</p>
+                </div>
+            </div>
+            <div>
+                <button class="accordion-toggle">
+                    <span>🤝 Unifying and Masking Functions</span>
+                    <span class="accordion-icon text-amber-600 text-xl">▼</span>
+                </button>
+                <div class="accordion-content hidden prose max-w-none space-y-3">
+                    <p>Manifest Destiny offered a unifying national project for white Anglo-Americans, fostering in-group solidarity against an "other." However, it was predicated on exclusion and violence, and exacerbated sectional tensions over slavery. Its moralistic language ("liberty," "divine will") masked brutal realities like forced removal (Trail of Tears), displacement, and war, providing a "moral shield" for aggressive actions.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="interplay" class="content-section hidden space-y-6">
+            <h2 class="text-3xl font-bold text-teal-700 border-b-2 border-amber-500 pb-2">🤝 The Interplay: Economic Interests and Ideology in Action</h2>
+            <p class="text-lg leading-relaxed">Economic and ideological motivations were rarely separate; they dynamically reinforced each other. Key historical events demonstrate this complex interplay, where the pursuit of resources and land was often justified and amplified by the rhetoric of Manifest Destiny. "Push" factors like economic downturns in the East also played a role, with Manifest Destiny offering a hopeful narrative.</p>
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                </div>
+            <p class="mt-4 text-sm text-slate-600">Click on an event card to see detailed motivations. The ideology of Manifest Destiny proved adaptable, its emphasis shifting to sanctify emerging economic opportunities, such as Texas cotton lands or California gold, effectively consecrating economic pursuits.</p>
+        </section>
+
+        <section id="consequences" class="content-section hidden space-y-6">
+            <h2 class="text-3xl font-bold text-teal-700 border-b-2 border-amber-500 pb-2">🌍 Consequences and Ramifications of Expansion</h2>
+            <p class="text-lg leading-relaxed">Westward expansion profoundly reshaped the continent and the nation, with lasting impacts on Native American populations, the environment, international relations, and American domestic society. The "manifest" destiny unfolded with complex and often tragic outcomes.</p>
+
+            <div>
+                <button class="accordion-toggle">
+                    <span>👥 Impact on Native American Populations</span>
+                    <span class="accordion-icon text-amber-600 text-xl">▼</span>
+                </button>
+                <div class="accordion-content hidden prose max-w-none space-y-3">
+                    <p>Devastating effects: forced displacement, destruction of traditional economies and cultures, violence (e.g., Wounded Knee Massacre), demographic collapse. The reservation system confined survivors to marginal lands. Assimilation policies (Dawes Act, boarding schools) aimed to eradicate native cultures. Over 500 million acres of indigenous land were transferred to settlers and businesses.</p>
+                    <div class="chart-container my-4">
+                        <canvas id="indigenousLandChart"></canvas>
+                    </div>
+                    <p class="text-sm text-center text-slate-600">Policies like the Indian Removal Act, Indian Appropriations Act, and Dawes Act resulted in the transfer of over 500 million acres of indigenous land.</p>
+                </div>
+            </div>
+            <div>
+                <button class="accordion-toggle">
+                    <span>🌱 Environmental Transformation</span>
+                    <span class="accordion-icon text-amber-600 text-xl">▼</span>
+                </button>
+                <div class="accordion-content hidden prose max-w-none space-y-3">
+                    <p>Widespread deforestation for agriculture and timber. Soil erosion and depletion from farming. Pollution from mining. Near-extinction of species like the American bison due to intensive hunting. However, these changes also spurred an early conservation movement (John Muir, national parks).</p>
+                </div>
+            </div>
+            <div>
+                <button class="accordion-toggle">
+                    <span>🕊️ International Relations</span>
+                    <span class="accordion-icon text-amber-600 text-xl">▼</span>
+                </button>
+                <div class="accordion-content hidden prose max-w-none space-y-3">
+                    <p>Conflict with Mexico (Mexican-American War, 1846-1848), resulting in Mexico ceding vast territories. Diplomacy and treaties with Great Britain (Oregon Territory, 1846). Acquisition of Pacific coastline expanded U.S. influence into Asia.</p>
+                </div>
+            </div>
+            <div>
+                <button class="accordion-toggle">
+                    <span>🏛️ Domestic Impact</span>
+                    <span class="accordion-icon text-amber-600 text-xl">▼</span>
+                </button>
+                <div class="accordion-content hidden prose max-w-none space-y-3">
+                    <p>Exacerbated sectional tensions over slavery (new territories: free or slave?), leading to the Civil War. Contributed to economic growth and a national market. Shaped American national identity (Frederick Jackson Turner's "Frontier Thesis": frontier fostered democracy, individualism).</p>
+                </div>
+            </div>
+            <div>
+                <button class="accordion-toggle">
+                    <span>❗ Unforeseen Negative Outcomes</span>
+                    <span class="accordion-icon text-amber-600 text-xl">▼</span>
+                </button>
+                <div class="accordion-content hidden prose max-w-none">
+                    <p>The pursuit of "manifest" destiny, despite its triumphalist narrative, unleashed environmental degradation, intensified racial conflict, the brutalization of Native peoples, and the Civil War. These challenged the simplistic idea of providential design, revealing deep internal contradictions and external brutalities.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="historiography" class="content-section hidden space-y-6">
+            <h2 class="text-3xl font-bold text-teal-700 border-b-2 border-amber-500 pb-2">📖 Historiographical Perspectives: Weighing the Motivations</h2>
+            <p class="text-lg leading-relaxed">Historians have debated the primary motivations behind westward expansion, with interpretations evolving over time, reflecting changing societal concerns and analytical frameworks. The "extent" to which economic or ideological factors are emphasized often reflects the historian's interpretive lens.</p>
+
+            <div>
+                <button class="accordion-toggle">
+                    <span>🌟 Early Interpretations (Late 19th - Early 20th C.)</span>
+                    <span class="accordion-icon text-amber-600 text-xl">▼</span>
+                </button>
+                <div class="accordion-content hidden prose max-w-none">
+                    <p>Often nationalist, emphasizing Manifest Destiny as a popular, inevitable force. Celebrated the "civilizing" mission, downplayed aggression and impact on Native Americans. Focused on adventure, spread of American institutions, national destiny.</p>
+                </div>
+            </div>
+            <div>
+                <button class="accordion-toggle">
+                    <span>💸 Progressive Era Historians (Early 20th C.)</span>
+                    <span class="accordion-icon text-amber-600 text-xl">▼</span>
+                </button>
+                <div class="accordion-content hidden prose max-w-none">
+                    <p>Emphasized economic determinism (e.g., Charles Beard). Viewed ideology like Manifest Destiny as a veneer for material interests of agriculturalists, industrialists, and speculators. Expansion driven by profit, land, resources.</p>
+                </div>
+            </div>
+            <div>
+                <button class="accordion-toggle">
+                    <span>🔍 New Western History (Late 20th C.)</span>
+                    <span class="accordion-icon text-amber-600 text-xl">▼</span>
+                </button>
+                <div class="accordion-content hidden prose max-w-none">
+                    <p>Critical examination: imperialism, devastating consequences for Native Americans, environmental changes. West as a place of conquest and contested encounters. Highlighted agency of diverse groups. Manifest Destiny analyzed as a racialized ideology justifying dispossession.</p>
+                </div>
+            </div>
+            <div>
+                <button class="accordion-toggle">
+                    <span>🔗 More Recent Scholarship</span>
+                    <span class="accordion-icon text-amber-600 text-xl">▼</span>
+                </button>
+                <div class="accordion-content hidden prose max-w-none">
+                    <p>Nuanced synthesis: acknowledges power of ideology and force of economic drivers. Emphasizes complex interplay and mutual reinforcement. Economic factors (e.g., transport costs, population growth) and ideological contexts are both key. Motivations seen in a dynamic, reciprocal relationship.</p>
+                </div>
+            </div>
+             <div>
+                <button class="accordion-toggle">
+                    <span>🔄 Evolving Interpretations & Societal Values</span>
+                    <span class="accordion-icon text-amber-600 text-xl">▼</span>
+                </button>
+                <div class="accordion-content hidden prose max-w-none">
+                    <p>Historical interpretations of westward expansion often mirror broader shifts in American societal values, national self-perception, and global consciousness (e.g., nation-building focus in early narratives, concerns about elite power in Progressive era, Civil Rights influence on revisionist histories, environmentalism highlighting ecological impacts). Historical interpretation is an ongoing dialogue influenced by contemporary concerns.</p>
+                </div>
+            </div>
+        </section>
+        
+        <div id="conclusion-summary" class="mt-12 bg-teal-50 p-6 rounded-lg shadow-lg border-l-4 border-teal-500">
+             <h2 class="text-2xl font-bold text-teal-700 mb-3">🏁 Concluding Thoughts: A Dual Legacy</h2>
+             <p class="mb-2">The westward expansion of the United States in the 19th century was propelled by an inseparable synergy of profound economic ambitions and deeply ingrained ideological justifications. Economic interests provided the practical impetus and tangible rewards, while the ideology of Manifest Destiny shaped the national will, provided a unifying (though exclusionary) purpose, and offered a moral framework for continental conquest.</p>
+             <p>This era was instrumental in forging a continental nation and fueling its economic ascent. However, this legacy is also marked by the methods of its achievement: the dispossession of Native American societies, severe environmental consequences, and the exacerbation of internal conflicts like slavery. Understanding these complex, intertwined motivations remains crucial for comprehending the historical trajectory and contemporary character of the United States.</p>
+        </div>
+
+    </main>
+
+    <footer class="bg-slate-800 text-orange-50 py-8 text-center mt-12">
+        <p class="text-sm">&copy; 2025 Interactive Exploration. Content derived from historical analysis.</p>
+        <p class="text-xs mt-1">This page is for educational and illustrative purposes.</p>
+    </footer>
+
+    <script>
+        const sections = document.querySelectorAll('section[id]');
+        const navLinks = document.querySelectorAll('nav a');
+        const conclusionSummary = document.getElementById('conclusion-summary');
+
+        function showSection(targetId) {
+            let sectionFound = false;
+            sections.forEach(section => {
+                if (section.id === targetId) {
+                    section.classList.remove('hidden');
+                    section.classList.add('content-section');
+                    sectionFound = true;
+                } else {
+                    section.classList.add('hidden');
+                    section.classList.remove('content-section');
+                }
+            });
+
+            navLinks.forEach(link => {
+                link.classList.remove('active-nav-link', 'bg-amber-500', 'text-white');
+                link.classList.add('text-slate-700', 'hover:bg-orange-100');
+                if (link.getAttribute('href') === `#${targetId}`) {
+                    link.classList.add('active-nav-link');
+                    link.classList.remove('text-slate-700', 'hover:bg-orange-100');
+                }
+            });
+            
+            // Show conclusion only if a main section is active (not on initial load if no hash)
+            if (sectionFound && targetId !== 'overview' && targetId !== '') {
+                 conclusionSummary.classList.remove('hidden');
+            } else if (targetId === 'overview' || targetId === '') {
+                 conclusionSummary.classList.remove('hidden'); // Show for overview too
+            }
+
+
+            window.scrollTo(0, 0); 
+        }
+
+        navLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const targetId = link.getAttribute('href').substring(1);
+                history.pushState({ section: targetId }, '', `#${targetId}`);
+                showSection(targetId);
+            });
+        });
+        
+        window.addEventListener('popstate', (event) => {
+            if (event.state && event.state.section) {
+                showSection(event.state.section);
+            } else {
+                const hash = window.location.hash.substring(1);
+                showSection(hash || 'overview');
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const hash = window.location.hash.substring(1);
+            const initialSection = hash || 'overview';
+            history.replaceState({ section: initialSection }, '', `#${initialSection}`);
+            showSection(initialSection);
+            
+            initializeAccordions();
+            populateEventCards();
+            createCharts();
+        });
+
+        function initializeAccordions() {
+            document.querySelectorAll('.accordion-toggle').forEach(button => {
+                button.addEventListener('click', () => {
+                    const content = button.nextElementSibling;
+                    const icon = button.querySelector('.accordion-icon');
+                    content.classList.toggle('hidden');
+                    if (icon) {
+                        icon.textContent = content.classList.contains('hidden') ? '▼' : '▲';
+                    }
+                });
+            });
+        }
+
+        const eventData = [
+            { 
+                title: "Louisiana Purchase (1803)",
+                economic: "Secure New Orleans/Mississippi for trade; vast agricultural lands, resources.",
+                ideological: "Jefferson's 'empire of liberty'; national security; room for future generations. Early expansionist mindset.",
+                interplay: "Economic necessity (trade) merged with a broad vision of national growth. Key Figure: Thomas Jefferson."
+            },
+            { 
+                title: "Indian Removal Act (1830)",
+                economic: "Demand for Southern lands for cotton, settlement; land speculation.",
+                ideological: "Framing removal as 'beneficial' for Native Americans; belief in their cultural inferiority; Manifest Destiny's call to 'subdue/cultivate' land.",
+                interplay: "Ideology rationalized economically driven land acquisition and displacement. Key Figure: Andrew Jackson."
+            },
+            { 
+                title: "Texas Annexation (1845)",
+                economic: "Fertile land for cotton/agriculture; expansion of slavery; access to potential Pacific ports.",
+                ideological: "Manifest Destiny as prime motivator; Polk's expansionist platform; U.S. 'right' to territory; preventing European influence.",
+                interplay: "Manifest Destiny fueled support for annexing economically valuable land. Annexation 'galvanized the ideology of Manifest Destiny.' Key Figure: James K. Polk."
+            },
+            { 
+                title: "Mexican-American War (1846-1848)",
+                economic: "Acquisition of California (ports, perceived wealth) and other Mexican territories.",
+                ideological: "Manifest Destiny; Polk's expansionism; perceived U.S. superiority and right to expand.",
+                interplay: "Ideology provided justification for war to seize vast, economically coveted territories. Key Figure: James K. Polk."
+            },
+            { 
+                title: "Oregon Country Acquisition (1846)",
+                economic: "Fertile lands (Willamette Valley); timber; Pacific trade access; 'cheap land'.",
+                ideological: "'Patriotism'; claiming region for U.S. vs. Britain; extension of American institutions; O'Sullivan cited Oregon in Manifest Destiny writings.",
+                interplay: "Economic allure of land combined with nationalistic fervor and ideological imperative for continental control."
+            },
+            { 
+                title: "California Gold Rush (from 1849)",
+                economic: "Direct pursuit of gold/wealth; spurred migration and ancillary industries.",
+                ideological: "Seen as proof of America's unique destiny/abundance; divine blessing; 'American Dream'.",
+                interplay: "Raw economic motive quickly absorbed into Manifest Destiny narrative, reinforcing expansion as profitable and providential."
+            },
+            {
+                title: "Homestead Act (1862)",
+                economic: "Facilitate agricultural settlement and economic development of the West; transfer public lands to private hands.",
+                ideological: "Implicitly supported by Manifest Destiny's vision of peopling and developing the continent with American farmers and institutions; Jeffersonian ideal of yeoman farmers.",
+                interplay: "Government policy promoting economic goals aligned with broader ideological vision of a settled, productive West."
+            },
+            {
+                title: "Pacific Railway Act (1862)",
+                economic: "Connect East to West for trade/transport; open West to markets; facilitate resource exploitation; profit from land grants.",
+                ideological: "National unity; technological progress as part of Manifest Destiny's vision of 'civilizing' the continent; overcoming natural barriers.",
+                interplay: "Massive economic undertaking justified by national interest and the ideological goal of binding the continent. Railroads seen as agents of 'progress.'"
+            }
+        ];
+
+        function populateEventCards() {
+            const container = document.querySelector('#interplay .grid');
+            if (!container) return;
+
+            eventData.forEach(event => {
+                const card = document.createElement('div');
+                card.className = 'event-card';
+                
+                const titleElement = document.createElement('h3');
+                titleElement.className = 'text-xl font-semibold mb-2 accordion-toggle cursor-pointer';
+                titleElement.innerHTML = `<span>${event.title}</span><span class="accordion-icon text-amber-600 text-xl">▼</span>`;
+                
+                const contentElement = document.createElement('div');
+                contentElement.className = 'accordion-content hidden text-sm space-y-2 mt-2';
+                contentElement.innerHTML = `
+                    <p><strong>Economic:</strong> ${event.economic}</p>
+                    <p><strong>Ideological:</strong> ${event.ideological}</p>
+                    <p><strong>Interplay/Notes:</strong> ${event.interplay}</p>
+                `;
+                
+                titleElement.addEventListener('click', () => {
+                    contentElement.classList.toggle('hidden');
+                    const icon = titleElement.querySelector('.accordion-icon');
+                    if (icon) {
+                        icon.textContent = contentElement.classList.contains('hidden') ? '▼' : '▲';
+                    }
+                });
+
+                card.appendChild(titleElement);
+                card.appendChild(contentElement);
+                container.appendChild(card);
+            });
+        }
+        
+        function createCharts() {
+            const railroadCtx = document.getElementById('railroadLandChart')?.getContext('2d');
+            if (railroadCtx) {
+                new Chart(railroadCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Railroad Land Grants'],
+                        datasets: [{
+                            label: 'Million Acres',
+                            data: [174],
+                            backgroundColor: ['rgba(245, 158, 11, 0.6)'], // amber-500
+                            borderColor: ['rgba(245, 158, 11, 1)'],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: { y: { beginAtZero: true, max: 200 } },
+                        plugins: { legend: { display: true } }
+                    }
+                });
+            }
+
+            const indigenousCtx = document.getElementById('indigenousLandChart')?.getContext('2d');
+            if (indigenousCtx) {
+                new Chart(indigenousCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Indigenous Land Transferred'],
+                        datasets: [{
+                            label: 'Million Acres',
+                            data: [500],
+                            backgroundColor: ['rgba(217, 70, 239, 0.6)'], // fuchsia-500 (example)
+                            borderColor: ['rgba(217, 70, 239, 1)'],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: { y: { beginAtZero: true, max: 600 } },
+                        plugins: { legend: { display: true } }
+                    }
+                });
+            }
+        }
+
+    </script>
+</body>
+</html>
+
